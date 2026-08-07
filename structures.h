@@ -122,6 +122,7 @@ typedef struct//player struct
 
 int original_prices[39];
 
+void Monopoly_board();
 void roll();
 void player_initializer();
 int roll_dice();

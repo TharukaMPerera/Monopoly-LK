@@ -55,6 +55,7 @@ void first_go(int *order)
     }
 }
 
+// the buy of opotunistic trader has to be fixed
 void buy(int player_id, int property_id, int *owned_properties[40], player players[5], property board[40])
 {
     switch (player_id)
@@ -182,7 +183,7 @@ void auction(int property_id, player players[5], property board[40])
     {
         highest_bid = board[property_id].original_price;
     }
-    while (bought == 0)
+    while (bought == 0) // auction loop
     {
         int skipped = 0;
         int skipped_players[4] = {0, 0, 0, 0};
@@ -284,7 +285,7 @@ void auction(int property_id, player players[5], property board[40])
                 }
             }
             }
-        }
+        }// WINNER PART
         for (int i = 0; i < 4; i++)
         {
             if (skipped_players[i] == 1)
@@ -312,3 +313,4 @@ void auction(int property_id, player players[5], property board[40])
         }
     }
 }
+// the auction of the opotunistic trader also have to be fixed 
