@@ -90,6 +90,7 @@ typedef struct   // Property struct
     color_group color;
     property_type type;
     char* name;
+    int original_price;
     int purchase_price;
     int mortgage_value;
     int base_rental;
@@ -119,6 +120,7 @@ typedef struct//player struct
     int bankrupt;
 }player;
 
+int original_prices[39];
 
 void roll();
 void player_initializer();

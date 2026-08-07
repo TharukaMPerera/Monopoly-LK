@@ -27,7 +27,7 @@ int double_roll(int dice_01, int dice_02)
     }
 }
 
-// function first go is under construction 
+// function first go is under construction
 void first_go(int *order)
 {
     int scores[4];
@@ -144,11 +144,7 @@ void loan(int player_id, int player_request, player players[5], property board[4
     }
 }
 
-
-
-
-
-void inflation(property board[40] , double inflation_rate)
+void inflation(property board[40], double inflation_rate)
 {
     for (int i = 0; i < 40; i++)
     {
@@ -167,33 +163,152 @@ void inflation(property board[40] , double inflation_rate)
             board[i].mortgage_value *= (1 + inflation_rate);
             board[i].base_rental *= (1 + inflation_rate);
         }
-
     }
     // insurance premiums and repair costs and the loan intrest rates has to be added im too lazy to add it rn
 }
 
-
-void auction(int property_id , player players[5] , property board[40], int player_id){
+// the randomizer has to be fixed yet
+void auction(int property_id, player players[5], property board[40])
+{
     int bought = 0;
-    
     int highest_bid = 0;
-    while (bought == 0){
-        switch (player_id){
-            case 1:{
-                if ((board[property_id].current_owner != 1) && ((board[property_id].type == land) || (board[property_id].type == utility) || (board[property_id].type == railway))){
-                     if (players[1].in_jail != active){
-                        int bid = 0;
-                        bid = highest_bid + (rand()%250 + 1);                      
+    int bid = 0;
 
+    if (((board[property_id].purchase_price) * 0.50) > board[property_id].original_price)
+    {
+        highest_bid = ((board[property_id].purchase_price) * 0.50);
+    }
+    else
+    {
+        highest_bid = board[property_id].original_price;
+    }
+    while (bought == 0)
+    {
+        int skipped = 0;
+        int skipped_players[4] = {0, 0, 0, 0};
+        for (int player_id = 1; player_id < 5; player_id++)
+        {
+            switch (player_id)
+            {
+            case 1:
+            {
+                if ((board[property_id].current_owner != 1) && ((board[property_id].type == land) || (board[property_id].type == utility) || (board[property_id].type == railway)))
+                {
+                    if ((players[1].in_jail != active) && ((board[property_id].purchase_price) * 1.20 <= highest_bid))
+                    {
+                        bid = highest_bid + (rand() % 250 + 1);
 
-
-
-
-
-                    }  
+                        if ((highest_bid > (board[property_id].purchase_price) * 1.20) && (players[1].cash >= bid))
+                        {
+                            printf("%s has bid $%d for %s.\n", players[1].name, bid, board[property_id].name);
+                            highest_bid = bid;
+                            break;
+                        }
+                        else
+                        {
+                            printf("%s won't bid anymore for %s.\n", players[1].name, board[property_id].name);
+                            skipped_players[0] = 1;
+                            break;
+                        }
+                    }
                 }
             }
+            case 2:
+            {
+                if ((board[property_id].current_owner != 2) && ((board[property_id].type == land) || (board[property_id].type == utility) || (board[property_id].type == railway)))
+                {
+                    if ((players[2].in_jail != active) && (highest_bid < board[property_id].original_price) && ((players[2].cash - bid) >= (players[2].cash * 0.5)))
+                    {
+                        bid = highest_bid + (rand() % 250 + 1);
 
-        }   
+                        if ((players[2].cash >= bid) && (highest_bid < board[property_id].original_price) && ((players[2].cash - bid) >= (players[2].cash * 0.5)))
+                        {
+                            printf("%s has bid $%d for %s.\n", players[2].name, bid, board[property_id].name);
+                            highest_bid = bid;
+                            break;
+                        }
+                        else
+                        {
+                            printf("%s won't bid anymore for %s.\n", players[2].name, board[property_id].name);
+                            skipped_players[1] = 1;
+                            break;
+                        }
+                    }
+                }
+            }
+            case 3:
+            {
+
+                if ((board[property_id].current_owner != 3) && ((board[property_id].type == land) || (board[property_id].type == utility) || (board[property_id].type == railway)))
+                {
+                    if ((players[3].in_jail != active))
+                    {
+                        bid = highest_bid + (rand() % 250 + 1);
+
+                        if (players[3].cash >= bid)
+                        {
+                            printf("%s has bid $%d for %s.\n", players[3].name, bid, board[property_id].name);
+                            highest_bid = bid;
+                            break;
+                        }
+                        else
+                        {
+                            printf("%s won't bid anymore for %s.\n", players[3].name, board[property_id].name);
+                            skipped_players[2] = 1;
+                            break;
+                        }
+                    }
+                }
+            }
+            case 4:
+            {
+                if ((board[property_id].current_owner != 4) && ((board[property_id].type == land) || (board[property_id].type == utility) || (board[property_id].type == railway)))
+                {
+                    if ((players[4].in_jail != active))
+                    {
+                        bid = highest_bid + (rand() % 250 + 1);
+
+                        if (players[4].cash >= bid)
+                        {
+                            printf("%s has bid $%d for %s.\n", players[4].name, bid, board[property_id].name);
+                            highest_bid = bid;
+                            break;
+                        }
+                        else
+                        {
+                            printf("%s won't bid anymore for %s.\n", players[4].name, board[property_id].name);
+                            skipped_players[3] = 1;
+                            break;
+                        }
+                    }
+                }
+            }
+            }
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            if (skipped_players[i] == 1)
+            {
+                skipped++;
+            }
+            if (skipped == 3)
+            {
+                bought = 1;
+                for (int j = 0; j < 4; j++)
+                {
+                    if (skipped_players[j] == 0)
+                    {
+                        players[j + 1].cash -= highest_bid;
+                        board[property_id].current_owner = j + 1;
+                        players[j + 1].num_properties++;
+                        *players[j + 1].owned_properties[property_id] = j + 1;
+                        players[j + 1].total_mortgage_value += board[property_id].mortgage_value;
+                        printf("%s has won the auction for %s with a bid of $%d.\n", players[j + 1].name, board[property_id].name, highest_bid);
+                        bought = 1;
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
