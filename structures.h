@@ -120,8 +120,9 @@ typedef struct//player struct
     int bankrupt;
 }player;
 
-int original_prices[39];
 
+
+//functions
 void game_loop();
 void Monopoly_board();
 void player_initializer();
