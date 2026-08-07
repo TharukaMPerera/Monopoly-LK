@@ -56,7 +56,7 @@ void first_go(int *order)
 }
 
 // the buy of opotunistic trader has to be fixed
-void buy(int player_id, int property_id, int *owned_properties[40], player players[5], property board[40])
+void buy_function(int player_id, int property_id, int *owned_properties[40], player players[5], property board[40])
 {
     switch (player_id)
     {
@@ -109,7 +109,7 @@ void buy(int player_id, int property_id, int *owned_properties[40], player playe
     }
 }
 
-void loan(int player_id, int player_request, player players[5], property board[40])
+void loan_function(int player_id, int player_request, player players[5], property board[40])
 {
     if (players[player_id].total_mortgage_value > 0)
     {
@@ -169,7 +169,7 @@ void inflation(property board[40], double inflation_rate)
 }
 
 // the randomizer has to be fixed yet
-void auction(int property_id, player players[5], property board[40])
+void auction_function(int property_id, player players[5], property board[40])
 {
     int bought = 0;
     int highest_bid = 0;
