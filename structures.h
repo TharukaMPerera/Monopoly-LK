@@ -105,6 +105,7 @@ typedef struct   // Property struct
 
 typedef struct//player struct
 {
+    int location;
     char* name;
     int cash;
     int *owned_properties[40];   
@@ -119,12 +120,13 @@ typedef struct//player struct
 }player;
 
 
-void Monopoly_board();
+void roll();
 void player_initializer();
 int roll_dice();
 int double_roll(int dice_01, int dice_02);
 void first_go(int *order);
 void buy(int player_id, int property_id,int *owned_properties[40], player players[4], property board[40]);
 void loan(int player_id, int player_request, player players[4]);
+void auction(int property_id , player players[5] , property board[40], int player_id);
 
 #endif

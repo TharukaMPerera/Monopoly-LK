@@ -4,7 +4,7 @@
 #include "board.c"
 #include "players.c"
 
-int order[4];
+static int order[4];
 
 int roll_dice()
 {
@@ -27,6 +27,7 @@ int double_roll(int dice_01, int dice_02)
     }
 }
 
+// function first go is under construction 
 void first_go(int *order)
 {
     int scores[4];
@@ -54,7 +55,7 @@ void first_go(int *order)
     }
 }
 
-void buy(int player_id, int property_id, int *owned_properties[40], player players[4], property board[40])
+void buy(int player_id, int property_id, int *owned_properties[40], player players[5], property board[40])
 {
     switch (player_id)
     {
@@ -107,17 +108,17 @@ void buy(int player_id, int property_id, int *owned_properties[40], player playe
     }
 }
 
-void loan(int player_id, int player_request, player players[4], property board[40])
+void loan(int player_id, int player_request, player players[5], property board[40])
 {
-    if (players[1].total_mortgage_value > 0)
+    if (players[player_id].total_mortgage_value > 0)
     {
-        if (players[1].loans_owned.active == inactive)
+        if (players[player_id].loans_owned.active == inactive)
         {
-            if (player_request <= players[1].total_mortgage_value)
+            if (player_request <= players[player_id].total_mortgage_value)
             {
-                players[1].cash += player_request;
-                players[1].total_mortgage_value -= player_request;
-                printf("%s has taken a loan of $%d.\n", players[1].name, player_request);
+                players[player_id].cash += player_request;
+                players[player_id].total_mortgage_value -= player_request;
+                printf("%s has taken a loan of $%d.\n", players[player_id].name, player_request);
                 for (int i = 0; i < 40; i++)
                 {
                     if (board[i].current_owner == 1)
@@ -125,20 +126,74 @@ void loan(int player_id, int player_request, player players[4], property board[4
                         board[i].mortgage_status = 1;
                     }
                 }
-                players[1].loans_owned.amount += player_request;
-                players[1].loans_owned.loan_duration = 20;
-                players[1].loans_owned.interest_rate = 0.05;
-                players[1].loans_owned.active = active;
+                players[player_id].loans_owned.amount += player_request;
+                players[player_id].loans_owned.loan_duration = 20;
+                players[player_id].loans_owned.interest_rate = 0.05;
+                players[player_id].loans_owned.active = active;
             }
             else
             {
-                printf("%s cannot take a loan of $%d as it exceeds the total mortgage value of $%d.\n", players[1].name, player_request, players[1].total_mortgage_value);
+                printf("%s cannot take a loan of $%d as it exceeds the total mortgage value of $%d.\n", players[player_id].name, player_request, players[player_id].total_mortgage_value);
             }
         }
     }
 
     else
     {
-        printf("%s has no properties to act as collateral.\n", players[1].name);
+        printf("%s has no properties to act as collateral.\n", players[player_id].name);
+    }
+}
+
+
+
+
+
+void inflation(property board[40] , double inflation_rate)
+{
+    for (int i = 0; i < 40; i++)
+    {
+        if (board[i].type == land)
+        {
+            board[i].purchase_price *= (1 + inflation_rate);
+            board[i].mortgage_value *= (1 + inflation_rate);
+            board[i].base_rental *= (1 + inflation_rate);
+            board[i].house_cost *= (1 + inflation_rate);
+            board[i].hotel_cost *= (1 + inflation_rate);
+        }
+
+        if (board[i].type == utility || board[i].type == railway)
+        {
+            board[i].purchase_price *= (1 + inflation_rate);
+            board[i].mortgage_value *= (1 + inflation_rate);
+            board[i].base_rental *= (1 + inflation_rate);
+        }
+
+    }
+    // insurance premiums and repair costs and the loan intrest rates has to be added im too lazy to add it rn
+}
+
+
+void auction(int property_id , player players[5] , property board[40], int player_id){
+    int bought = 0;
+    
+    int highest_bid = 0;
+    while (bought == 0){
+        switch (player_id){
+            case 1:{
+                if ((board[property_id].current_owner != 1) && ((board[property_id].type == land) || (board[property_id].type == utility) || (board[property_id].type == railway))){
+                     if (players[1].in_jail != active){
+                        int bid = 0;
+                        bid = highest_bid + (rand()%250 + 1);                      
+
+
+
+
+
+
+                    }  
+                }
+            }
+
+        }   
     }
 }
