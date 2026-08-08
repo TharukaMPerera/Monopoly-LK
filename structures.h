@@ -66,6 +66,7 @@ typedef enum {
 }player_id;
 
 typedef enum{
+    none,
     house,
     hotel
 }building_type;
@@ -116,13 +117,14 @@ typedef struct//player struct
     insurance policies[40];      
     building buildings[40];      
     int position;                
-    activity in_jail;            
+    int in_jail;            
     int bankrupt;
 }player;
 
 
 
 //functions
+void game_start_print();
 void game_loop();
 void Monopoly_board();
 void player_initializer();

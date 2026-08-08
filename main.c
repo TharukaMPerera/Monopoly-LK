@@ -1,5 +1,5 @@
 #include "structures.h"
 int main() {
-    Monopoly_board();
+    game_loop();
     return 0;
 }

@@ -6,6 +6,15 @@
 
 static int order[4];
 
+void game_start_print(player players[4]){
+    printf("________Welcome to Monopoly LK!________\n");
+    printf("____________The Players are____________\n");
+    printf("     Player 1: AGGRESIVE INVESTOR\n");
+    printf("     Player 2: CONSERVATIVE BANKER\n");
+    printf("     Player 3: RISK TAKER\n");
+    printf("     Player 4: OPPORTUNISTIC TRADER\n");
+}
+
 int roll_dice()
 {
     int dice;
@@ -32,28 +41,46 @@ void first_go(int *order)
 {
     int scores[4];
     int dice_01, dice_02;
-    dice_01 = roll_dice();
-    dice_02 = roll_dice();
-    int total = dice_01 + dice_02;
+    int higgest = 0;
 
     for (int i = 0; i < 4; i++)
     {
-        scores[i] = total;
-    }
-
-    for (int i = 0; i < 4; i++)
-    {
-        printf("Player %d rolled: %d\n", i + 1, scores[i]);
-    }
-    order[0] = scores[0];
-    for (int i = 1; i < 4; i++)
-    {
-        if (scores[i] > scores[i - 1])
+        dice_01 = roll_dice();
+        dice_02 = roll_dice();
+        scores[i] = dice_01 + dice_02;
+        printf("Player %d rolled %d and %d for a total of %d.\n", i + 1, dice_01, dice_02, scores[i]);
+        if (scores[i] > higgest)
         {
-            order[i] = scores[i];
+            higgest = scores[i];
         }
     }
+    int tied = 1;
+    while (1){  // while there is a tie
+        tied = 0;
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = i + 1; j < 4; j++)
+            {
+                if (scores[i] == scores[j])
+                {
+                    tied = 1;
+                    printf("Player %d and Player %d are tied with a score of %d. Rerolling...\n", i + 1, j + 1, scores[i]);
+                    dice_01 = roll_dice();
+                    dice_02 = roll_dice();
+                    scores[i] = dice_01 + dice_02;
+                    printf("Player %d rerolled and got %d and %d for a total of %d.\n", i + 1, dice_01, dice_02, scores[i]);
+                    dice_01 = roll_dice();
+                    dice_02 = roll_dice();
+                    scores[j] = dice_01 + dice_02;
+                    printf("Player %d rerolled and got %d and %d for a total of %d.\n", j + 1, dice_01, dice_02, scores[j]);
+                }
+            }
+        }
+    }
+
+
 }
+
 
 // the buy of opotunistic trader has to be fixed
 void buy_function(int player_id, int property_id, int *owned_properties[40], player players[5], property board[40])
