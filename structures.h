@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int round_counter;
 int owned_properties[40]; 
 typedef enum{
     inactive,
@@ -66,7 +67,7 @@ typedef enum {
 }player_id;
 
 typedef enum{
-    none,
+    no_buildings,
     house,
     hotel
 }building_type;
@@ -125,14 +126,16 @@ typedef struct//player struct
 
 //functions
 void game_start_print();
-void game_loop();
+void initial_game_loop();
+void main_game_loop();
 void Monopoly_board();
+void print_stat (player *players[4], int round_counter);
 void player_initializer();
 int roll_dice();
 int double_roll(int dice_01, int dice_02);
 void first_go(int *order);
-void buy_function(int player_id, int property_id,int *owned_properties[40], player players[4], property board[40]);
-void loan_function(int player_id, int player_request, player players[4]);
-void auction_function(int property_id , player players[5] , property board[40], int player_id);
-
+void buy_function(int player_id, int property_id,int *owned_properties[40], player *players[4], property *board[40]);
+void loan_function(int player_id, int player_request, player *players[4]);
+void auction_function(int property_id , player *players[5] , property *board[40], int player_id);
+void inflation(property *board[40], double inflation_rate);
 #endif

@@ -6,7 +6,7 @@
 
 static int order[4];
 
-void game_start_print(player players[4]){
+void game_start_print(player *players[4]){
     printf("________Welcome to Monopoly LK!________\n");
     printf("____________The Players are____________\n");
     printf("     Player 1: AGGRESIVE INVESTOR\n");
@@ -38,6 +38,8 @@ int double_roll(int dice_01, int dice_02)
 
 // function first go is under construction
 void first_go(int *order)
+
+
 {
     int scores[4];
     int dice_01, dice_02;
@@ -77,13 +79,30 @@ void first_go(int *order)
             }
         }
     }
-
+    int order[4] = {0, 1, 2, 3};
+    for (int i = 0; i < 4; i++) {
+        for (int j = i + 1; j < 4; j++) {
+            if (scores[order[j]] > scores[order[i]]) {
+                int temp = order[i];
+                order[i] = order[j];
+                order[j] = temp;
+            }
+        }
+    }
 
 }
 
+void print_stats(player *players[4], int *round_counter){
+    printf("############################################\n");
+    printf("ROUND : %d\n",round_counter);
+    printf("Player Name_____Available Cash____Properties\n");
+    for(int i = 1; i<5; i++){
+        printf("%s              %d                %d\n",players[i].name ,players[i].cash ,players[i].num_properties);
+    }
+}
 
 // the buy of opotunistic trader has to be fixed
-void buy_function(int player_id, int property_id, int *owned_properties[40], player players[5], property board[40])
+void buy_function(int player_id, int property_id, int *owned_properties[40], player *players[5], property board[40])
 {
     switch (player_id)
     {
@@ -136,7 +155,7 @@ void buy_function(int player_id, int property_id, int *owned_properties[40], pla
     }
 }
 
-void loan_function(int player_id, int player_request, player players[5], property board[40])
+void loan_function(int player_id, int player_request, player *players[5], property *board[40])
 {
     if (players[player_id].total_mortgage_value > 0)
     {
@@ -172,7 +191,7 @@ void loan_function(int player_id, int player_request, player players[5], propert
     }
 }
 
-void inflation(property board[40], double inflation_rate)
+void inflation(property *board[40], double inflation_rate)
 {
     for (int i = 0; i < 40; i++)
     {
@@ -196,7 +215,7 @@ void inflation(property board[40], double inflation_rate)
 }
 
 // the randomizer has to be fixed yet
-void auction_function(int property_id, player players[5], property board[40])
+void auction_function(int property_id, player *players[5], property *board[40])
 {
     int bought = 0;
     int highest_bid = 0;
