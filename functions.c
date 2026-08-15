@@ -1,12 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
+
 #include "structures.h"
-#include "board.c"
-#include "players.c"
 
-static int order[4];
 
-void game_start_print(player *players[4]){
+
+void game_start_print(){
     printf("________Welcome to Monopoly LK!________\n");
     printf("____________The Players are____________\n");
     printf("     Player 1: AGGRESIVE INVESTOR\n");
@@ -18,8 +15,8 @@ void game_start_print(player *players[4]){
 int roll_dice()
 {
     int dice;
-    srand(1);
-    dice = rand() % 6 + 1;
+    srand(time(NULL));
+    dice = ((rand() % 6) + 1);
 
     return dice;
 }
@@ -37,72 +34,52 @@ int double_roll(int dice_01, int dice_02)
 }
 
 // function first go is under construction
-void first_go(int *order)
-
-
-{
-    int scores[4];
-    int dice_01, dice_02;
-    int higgest = 0;
-
-    for (int i = 0; i < 4; i++)
-    {
-        dice_01 = roll_dice();
-        dice_02 = roll_dice();
-        scores[i] = dice_01 + dice_02;
-        printf("Player %d rolled %d and %d for a total of %d.\n", i + 1, dice_01, dice_02, scores[i]);
-        if (scores[i] > higgest)
-        {
-            higgest = scores[i];
-        }
-    }
-    int tied = 1;
-    while (1){  // while there is a tie
-        tied = 0;
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = i + 1; j < 4; j++)
-            {
-                if (scores[i] == scores[j])
-                {
-                    tied = 1;
-                    printf("Player %d and Player %d are tied with a score of %d. Rerolling...\n", i + 1, j + 1, scores[i]);
-                    dice_01 = roll_dice();
-                    dice_02 = roll_dice();
-                    scores[i] = dice_01 + dice_02;
-                    printf("Player %d rerolled and got %d and %d for a total of %d.\n", i + 1, dice_01, dice_02, scores[i]);
-                    dice_01 = roll_dice();
-                    dice_02 = roll_dice();
-                    scores[j] = dice_01 + dice_02;
-                    printf("Player %d rerolled and got %d and %d for a total of %d.\n", j + 1, dice_01, dice_02, scores[j]);
-                }
+void player_order(player players[]){
+  
+    activity swapped = active;
+    
+        for (int i = 1; i < 5; i++) {
+            if (players[i].is_order_assigned == inactive) {
+                players[i].dice_value = roll_dice() + roll_dice();
+                printf("%s rolls %i.\n", players[i].name, players[i].dice_value);
+               
             }
+   
         }
-    }
-    int order[4] = {0, 1, 2, 3};
-    for (int i = 0; i < 4; i++) {
-        for (int j = i + 1; j < 4; j++) {
-            if (scores[order[j]] > scores[order[i]]) {
-                int temp = order[i];
-                order[i] = order[j];
-                order[j] = temp;
+    
+
+    while(swapped){
+        swapped = inactive;
+        for (int i = 1; i < 4; i++){
+            player temp;
+            if((players[i].is_order_assigned == inactive) && (players[i].dice_value < players[i+1].dice_value)){
+                temp = players[i];
+                players[i] = players[i+1];
+                players[i+1] = temp;
+                
+                swapped = active;
             }
+
         }
     }
 
+    for(int j = 1; j < 5; j++){
+        printf("-----------------------------------------\n");
+        printf("Player %d: %s\n",j,players[j].name);
+    }
 }
 
-void print_stats(player *players[4], int *round_counter){
+void print_stats(player players[], int *round_counter){
     printf("############################################\n");
-    printf("ROUND : %d\n",round_counter);
+    printf("ROUND : %d\n",*round_counter);
     printf("Player Name_____Available Cash____Properties\n");
     for(int i = 1; i<5; i++){
-        printf("%s              %d                %d\n",players[i].name ,players[i].cash ,players[i].num_properties);
+        printf("%-23s  %6d LKR  %2d\n",players[i].name ,players[i].cash ,players[i].num_properties);
     }
 }
 
 // the buy of opotunistic trader has to be fixed
-void buy_function(int player_id, int property_id, int *owned_properties[40], player *players[5], property board[40])
+void buy_function(int player_id, int property_id, int owned_properties[], player players[], property board[])
 {
     switch (player_id)
     {
@@ -111,7 +88,7 @@ void buy_function(int player_id, int property_id, int *owned_properties[40], pla
         if ((players[1].cash >= board[property_id].purchase_price) /*&&(the future rent)*/)
         {
             players[1].cash -= board[property_id].purchase_price;
-            *owned_properties[property_id] = 1;
+            owned_properties[property_id] = 1;
             board[property_id].current_owner = 1;
             players[1].num_properties++;
             printf("%s has purchased %s for $%d.\n", players[1].name, board[property_id].name, board[property_id].purchase_price);
@@ -125,7 +102,7 @@ void buy_function(int player_id, int property_id, int *owned_properties[40], pla
         if (reserve_cash >= (players[2].cash * 0.5))
         {
             players[2].cash -= board[property_id].purchase_price;
-            *owned_properties[property_id] = 2;
+            owned_properties[property_id] = 2;
             board[property_id].current_owner = 2;
             players[2].num_properties++;
             printf("%s has purchased %s for $%d.\n", players[2].name, board[property_id].name, board[property_id].purchase_price);
@@ -139,7 +116,7 @@ void buy_function(int player_id, int property_id, int *owned_properties[40], pla
         if (players[3].cash >= board[property_id].purchase_price)
         {
             players[3].cash -= board[property_id].purchase_price;
-            *owned_properties[property_id] = 3;
+            owned_properties[property_id] = 3;
             board[property_id].current_owner = 3;
             players[3].num_properties++;
             printf("%s has purchased %s for $%d.\n", players[3].name, board[property_id].name, board[property_id].purchase_price);
@@ -155,7 +132,7 @@ void buy_function(int player_id, int property_id, int *owned_properties[40], pla
     }
 }
 
-void loan_function(int player_id, int player_request, player *players[5], property *board[40])
+void loan_function(int player_id, int player_request, player players[], property board[])
 {
     if (players[player_id].total_mortgage_value > 0)
     {
@@ -191,7 +168,7 @@ void loan_function(int player_id, int player_request, player *players[5], proper
     }
 }
 
-void inflation(property *board[40], double inflation_rate)
+void inflation(property board[], double inflation_rate)
 {
     for (int i = 0; i < 40; i++)
     {
@@ -215,7 +192,7 @@ void inflation(property *board[40], double inflation_rate)
 }
 
 // the randomizer has to be fixed yet
-void auction_function(int property_id, player *players[5], property *board[40])
+void auction_function(int property_id, player players[], property board[])
 {
     int bought = 0;
     int highest_bid = 0;
@@ -233,9 +210,9 @@ void auction_function(int property_id, player *players[5], property *board[40])
     {
         int skipped = 0;
         int skipped_players[4] = {0, 0, 0, 0};
-        for (int player_id = 1; player_id < 5; player_id++)
+        for (int i = 1; i < 5; i++)
         {
-            switch (player_id)
+            switch (players[i].player_id)
             {
             case 1:
             {

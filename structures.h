@@ -3,24 +3,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
-int round_counter;
-int owned_properties[40]; 
+
+ 
 typedef enum{
     inactive,
     active
 }activity;
 
-
-typedef enum
-{
-    NONE,
-    BANK,
-    PLAYER_1,
-    PLAYER_2,
-    PLAYER_3,
-    PLAYER_4
-} Player;
 
 typedef enum
 {   
@@ -64,7 +55,7 @@ typedef enum {
     CONSERVATIVE_BANKER,
     RISK_TAKER,
     OPPORTUNISTIC_TRADER 
-}player_id;
+}Player_id;
 
 typedef enum{
     no_buildings,
@@ -97,7 +88,7 @@ typedef struct   // Property struct
     int mortgage_value;
     int base_rental;
     int house_cost;
-    int current_owner;
+    Player_id current_owner;
     int hotel_cost;
     activity mortgage_status;
     activity insurance_status;
@@ -110,7 +101,10 @@ typedef struct//player struct
 {
     int location;
     char* name;
+    Player_id player_id;
     int cash;
+    int dice_value;
+    activity is_order_assigned;
     int *owned_properties[40];   
     int num_properties;
     loan_details loans_owned;
@@ -125,17 +119,18 @@ typedef struct//player struct
 
 
 //functions
+
 void game_start_print();
 void initial_game_loop();
-void main_game_loop();
-void Monopoly_board();
-void print_stat (player *players[4], int round_counter);
-void player_initializer();
+void main_game_loop(player players[], int *round_counter);
+void Monopoly_board(property board[]);
+void print_stats(player players[], int *round_counter);
+void player_initializer(player players[]);
 int roll_dice();
 int double_roll(int dice_01, int dice_02);
-void first_go(int *order);
-void buy_function(int player_id, int property_id,int *owned_properties[40], player *players[4], property *board[40]);
-void loan_function(int player_id, int player_request, player *players[4]);
-void auction_function(int property_id , player *players[5] , property *board[40], int player_id);
-void inflation(property *board[40], double inflation_rate);
+void player_order(player players[]);
+void buy_function(int player_id, int property_id,int owned_properties[], player players[], property board[]);
+void loan_function(int player_id, int player_request, player players[], property board[]);
+void auction_function(int property_id , player players[] , property board[]);
+void inflation(property board[], double inflation_rate);
 #endif
